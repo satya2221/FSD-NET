@@ -1,3 +1,4 @@
+using _7._Intro_to_ASP;
 using Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,17 @@ builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<EmployeeDbContext>(option => option.UseSqlServer(connectionString));
+
+#region add scope Repository
+builder.Services.AddScoped<IRegionRepository, RegionRepository>();
+builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+#endregion
+
+#region add scope Service
+builder.Services.AddScoped<IRegionService, RegionService>();
+builder.Services.AddScoped<ICountryService, CountryService>();
+#endregion
 
 var app = builder.Build();
 
