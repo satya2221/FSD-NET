@@ -1,14 +1,19 @@
-﻿using Models;
+﻿using AutoMapper;
+using Models;
 
 namespace _7._Intro_to_ASP;
 
-public class RegionService (IRegionRepository _regionRepository, ITransactionRepository _transactionRepository) : IRegionService
+public class RegionService (IRegionRepository _regionRepository, ITransactionRepository _transactionRepository, IMapper _mapper) : IRegionService
 {
-    public async Task<Region> CreateAsync(Region region)
+    public async Task<RegionResponseDto> CreateAsync(RegionRequestDto regionRequestDto)
     {
-        var entity = await _regionRepository.CreateAsync(region);
+        var mapEntity = _mapper.Map<Region>(regionRequestDto);
+
+        var entity = await _regionRepository.CreateAsync(mapEntity);
         await _transactionRepository.SaveChangesAsync();
-        return entity;
+
+        var toDto = _mapper.Map<RegionResponseDto>(entity);
+        return toDto;
     }
 
     public async Task<bool> DeleteAsync(Guid id)
@@ -25,19 +30,22 @@ public class RegionService (IRegionRepository _regionRepository, ITransactionRep
         return true;
     }
 
-    public async Task<IEnumerable<Region>?> GetAllAsync()
+    public async Task<IEnumerable<RegionResponseDto>?> GetAllAsync()
     {
         var data = await _regionRepository.GetAllAsync();
-        return data;
+
+        var toDto = _mapper.Map<IEnumerable<RegionResponseDto>>(data);
+        return toDto;
     }
 
-    public async Task<Region?> GetByIdAsync(Guid id)
+    public async Task<RegionResponseDto?> GetByIdAsync(Guid id)
     {
         var entity = await _regionRepository.GetByIdAsync(id);
-        return entity;
+        var toDto = _mapper.Map<RegionResponseDto>(entity);
+        return toDto;
     }
 
-    public async Task<bool> UpdateAsync(Guid id, Region region)
+    public async Task<bool> UpdateAsync(Guid id, RegionRequestDto regionRequestDto)
     {
         var checkId = await _regionRepository.GetByIdAsync(id);
         _transactionRepository.ChangeTrackerClear();
@@ -45,9 +53,10 @@ public class RegionService (IRegionRepository _regionRepository, ITransactionRep
         {
             return false;
         }
+        var mapEntity = _mapper.Map<Region>(regionRequestDto);
         // Assign id ke region
-        region.Id = id;
-        _regionRepository.Update(region);
+        mapEntity.Id = id;
+        _regionRepository.Update(mapEntity);
         await _transactionRepository.SaveChangesAsync();
         return true;
     }

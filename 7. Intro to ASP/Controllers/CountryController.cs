@@ -29,16 +29,16 @@ public class CountryController (ICountryService countryService) :ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCountryAsync(Country country)
+    public async Task<IActionResult> CreateCountryAsync(CountryRequestDto countryRequestDto)
     {
-        var result = await countryService.CreateAsync(country);
+        var result = await countryService.CreateAsync(countryRequestDto);
         return Ok(result);
     }
 
     [HttpPut("{Id}")]
-    public async Task<IActionResult> UpdateCountryAsync(Guid Id, Country country)
+    public async Task<IActionResult> UpdateCountryAsync(Guid Id, CountryRequestDto countryRequestDto)
     {
-        var isUpdated = await countryService.UpdateAsync(Id, country);
+        var isUpdated = await countryService.UpdateAsync(Id, countryRequestDto);
         if(!isUpdated){
             return BadRequest();
         }

@@ -23,6 +23,7 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 #region add scope Service
 builder.Services.AddScoped<IRegionService, RegionService>();
 builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 #endregion
 
 var app = builder.Build();

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Models;
 
 namespace _7._Intro_to_ASP;
@@ -29,16 +30,16 @@ public class RegionController (IRegionService regionService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateRegionAsync(Region region)
+    public async Task<IActionResult> CreateRegionAsync(RegionRequestDto regionRequestDto)
     {
-        var result = await regionService.CreateAsync(region);
+        var result = await regionService.CreateAsync(regionRequestDto);
         return Ok(result);
     }
 
     [HttpPut("{Id}")]
-    public async Task<IActionResult> UpdateRegionAsync(Guid Id, Region region)
+    public async Task<IActionResult> UpdateRegionAsync(Guid Id, RegionRequestDto regionRequestDto)
     {
-        var isUpdated = await regionService.UpdateAsync(Id, region);
+        var isUpdated = await regionService.UpdateAsync(Id, regionRequestDto);
         if(!isUpdated){
             return BadRequest();
         }

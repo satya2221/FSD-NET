@@ -1,14 +1,17 @@
-﻿using Models;
+﻿using AutoMapper;
+using Models;
 
 namespace _7._Intro_to_ASP;
 
-public class CountryService(ICountryRepository countryRepository, ITransactionRepository _transactionRepository) : ICountryService
+public class CountryService(ICountryRepository countryRepository, ITransactionRepository _transactionRepository, IMapper _mapper) : ICountryService
 {
-    public async Task<Country> CreateAsync(Country country)
+    public async Task<CountryResponseDto> CreateAsync(CountryRequestDto countryRequestDto)
     {
-        var entity = await countryRepository.CreateAsync(country);
+        var entity = await countryRepository.CreateAsync((Country)countryRequestDto);
         await _transactionRepository.SaveChangesAsync();
-        return entity;
+
+        var toDto = _mapper.Map<CountryResponseDto>(entity);
+        return toDto;
     }
 
     public async Task<bool> DeleteAsync(Guid id)
@@ -25,19 +28,21 @@ public class CountryService(ICountryRepository countryRepository, ITransactionRe
         return true;
     }
 
-    public async Task<IEnumerable<Country>?> GetAllAsync()
+    public async Task<IEnumerable<CountryResponseDto>?> GetAllAsync()
     {
         var data = await countryRepository.GetAllAsync();
-        return data;
+        var toDto = _mapper.Map<IEnumerable<CountryResponseDto>>(data);
+        return toDto;
     }
 
-    public async Task<Country?> GetByIdAsync(Guid id)
+    public async Task<CountryResponseDto?> GetByIdAsync(Guid id)
     {
         var entity = await countryRepository.GetByIdAsync(id);
-        return entity;
+        var toDto = _mapper.Map<CountryResponseDto>(entity);
+        return toDto;
     }
 
-    public async Task<bool> UpdateAsync(Guid id, Country country)
+    public async Task<bool> UpdateAsync(Guid id, CountryRequestDto countryRequestDto)
     {
         var checkId = await countryRepository.GetByIdAsync(id);
         _transactionRepository.ChangeTrackerClear();
@@ -46,6 +51,7 @@ public class CountryService(ICountryRepository countryRepository, ITransactionRe
             return false;
         }
         // Assign id ke region
+        var country = (Country)countryRequestDto;
         country.Id = id;
         countryRepository.Update(country);
         await _transactionRepository.SaveChangesAsync();
