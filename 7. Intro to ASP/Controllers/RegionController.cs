@@ -14,9 +14,9 @@ public class RegionController (IRegionService regionService) : ControllerBase
         var result = await regionService.GetAllAsync();
         if(result is null || !result.Any())
         {
-            return NotFound();
+            throw new NullReferenceException("Region Data is Empty");
         }
-        return Ok(result);
+        return Ok(new DataResponseDto<RegionResponseDto>(StatusCodes.Status200OK, "Data Found", result));
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetRegionByIdAsync(Guid id)
@@ -24,16 +24,16 @@ public class RegionController (IRegionService regionService) : ControllerBase
         var result = await regionService.GetByIdAsync(id);
         if(result is null)
         {
-            return NotFound();
+            return NotFound(new MessageResponseDto());
         }
-        return Ok(result);
+        return Ok(new SingleResponseDto<RegionResponseDto>(StatusCodes.Status200OK, "Data Found", result) );
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateRegionAsync(RegionRequestDto regionRequestDto)
     {
-        var result = await regionService.CreateAsync(regionRequestDto);
-        return Ok(result);
+        await regionService.CreateAsync(regionRequestDto);
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly created"));
     }
 
     [HttpPut("{Id}")]
@@ -43,7 +43,7 @@ public class RegionController (IRegionService regionService) : ControllerBase
         if(!isUpdated){
             return BadRequest();
         }
-        return Ok();
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly updated"));
     }
 
     [HttpDelete]
@@ -54,6 +54,6 @@ public class RegionController (IRegionService regionService) : ControllerBase
         {
             return NotFound();
         }
-        return Ok();
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly deleted"));
     }
 }

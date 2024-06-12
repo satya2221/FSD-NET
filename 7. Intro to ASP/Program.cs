@@ -17,13 +17,16 @@ builder.Services.AddDbContext<EmployeeDbContext>(option => option.UseSqlServer(c
 #region add scope Repository
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 #endregion
 
 #region add scope Service
 builder.Services.AddScoped<IRegionService, RegionService>();
 builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddExceptionHandler<GlobalExceptionHandlerCustom>();
 #endregion
 
 var app = builder.Build();
@@ -34,6 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseExceptionHandler(_ => {});
 
 app.UseHttpsRedirection();
 

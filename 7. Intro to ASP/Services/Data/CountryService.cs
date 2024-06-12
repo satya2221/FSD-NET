@@ -3,58 +3,21 @@ using Models;
 
 namespace _7._Intro_to_ASP;
 
-public class CountryService(ICountryRepository countryRepository, ITransactionRepository _transactionRepository, IMapper _mapper) : ICountryService
+public class CountryService : GeneralService<ICountryRepository, CountryRequestDto, CountryResponseDto, Country>, ICountryService
 {
-    public async Task<CountryResponseDto> CreateAsync(CountryRequestDto countryRequestDto)
+    private readonly IRegionRepository _regionRepository;
+    public CountryService(ICountryRepository repository, IMapper mapper, ITransactionRepository transactionRepository, IRegionRepository regionRepository) : base(repository, mapper, transactionRepository)
     {
-        var entity = await countryRepository.CreateAsync((Country)countryRequestDto);
-        await _transactionRepository.SaveChangesAsync();
-
-        var toDto = _mapper.Map<CountryResponseDto>(entity);
-        return toDto;
+        _regionRepository = regionRepository;
     }
-
-    public async Task<bool> DeleteAsync(Guid id)
+    public override async Task CreateAsync(CountryRequestDto requestDto)
     {
-         var entity = await countryRepository.GetByIdAsync(id);
-        _transactionRepository.ChangeTrackerClear();
-        if (entity is null)
-        {
-            return false;
-        }
-        
-        countryRepository.Delete(entity);
-        await _transactionRepository.SaveChangesAsync();
-        return true;
+        await CheckNullReferenceCustom(requestDto.RegionId, _regionRepository, nameof(requestDto.RegionId));
+        await base.CreateAsync(requestDto);
     }
-
-    public async Task<IEnumerable<CountryResponseDto>?> GetAllAsync()
+    public override async Task<bool> UpdateAsync(Guid id, CountryRequestDto requestDto)
     {
-        var data = await countryRepository.GetAllAsync();
-        var toDto = _mapper.Map<IEnumerable<CountryResponseDto>>(data);
-        return toDto;
-    }
-
-    public async Task<CountryResponseDto?> GetByIdAsync(Guid id)
-    {
-        var entity = await countryRepository.GetByIdAsync(id);
-        var toDto = _mapper.Map<CountryResponseDto>(entity);
-        return toDto;
-    }
-
-    public async Task<bool> UpdateAsync(Guid id, CountryRequestDto countryRequestDto)
-    {
-        var checkId = await countryRepository.GetByIdAsync(id);
-        _transactionRepository.ChangeTrackerClear();
-        if (checkId == null)
-        {
-            return false;
-        }
-        // Assign id ke region
-        var country = (Country)countryRequestDto;
-        country.Id = id;
-        countryRepository.Update(country);
-        await _transactionRepository.SaveChangesAsync();
-        return true;
+        await CheckNullReferenceCustom(requestDto.RegionId, _regionRepository, nameof(requestDto.RegionId));
+        return await base.UpdateAsync(id, requestDto);
     }
 }

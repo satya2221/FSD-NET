@@ -13,9 +13,9 @@ public class CountryController (ICountryService countryService) :ControllerBase
         var result = await countryService.GetAllAsync();
         if(result is null || !result.Any())
         {
-            return NotFound();
+            return NotFound(new MessageResponseDto());
         }
-        return Ok(result);
+        return Ok(new DataResponseDto<CountryResponseDto>(StatusCodes.Status200OK, "Data Found", result));
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetCountryByIdAsync(Guid id)
@@ -23,16 +23,16 @@ public class CountryController (ICountryService countryService) :ControllerBase
         var result = await countryService.GetByIdAsync(id);
         if(result is null)
         {
-            return NotFound();
+            return NotFound(new MessageResponseDto());
         }
-        return Ok(result);
+        return Ok(new SingleResponseDto<CountryResponseDto>(StatusCodes.Status200OK,"Data Found",result ) );
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateCountryAsync(CountryRequestDto countryRequestDto)
     {
-        var result = await countryService.CreateAsync(countryRequestDto);
-        return Ok(result);
+        await countryService.CreateAsync(countryRequestDto);
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly created"));
     }
 
     [HttpPut("{Id}")]
@@ -42,7 +42,7 @@ public class CountryController (ICountryService countryService) :ControllerBase
         if(!isUpdated){
             return BadRequest();
         }
-        return Ok();
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly updated"));
     }
 
     [HttpDelete]
@@ -51,8 +51,8 @@ public class CountryController (ICountryService countryService) :ControllerBase
         var isDeleted = await countryService.DeleteAsync(id);
         if (!isDeleted)
         {
-            return NotFound();
+            return NotFound(new MessageResponseDto());
         }
-        return Ok();
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly deleted"));
     }
 }
