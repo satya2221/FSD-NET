@@ -4,4 +4,7 @@ public interface ITransactionRepository : IDisposable
 {
     Task SaveChangesAsync();
     void ChangeTrackerClear();
+    Task BeginTransactionAsync();
+    Task CommitAsync();
+    Task RollbackAsync();
 }

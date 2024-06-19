@@ -14,7 +14,7 @@ public class Employee : BaseEntity
     public string Email { get; set; } = string.Empty;
     [MaxLength(20)]
     public string PhoneNumber { get; set; } = string.Empty;
-    public DateTime HireDate { get; set; }
+    public DateOnly HireDate { get; set; }
     public int Salary { get; set; }
     public float? CommisionPct { get; set; }
     public Guid? ManagerId {get; set;}
@@ -35,4 +35,8 @@ public class Employee : BaseEntity
     public Job? Job { get; set; }
 
     public User? User {get; set;}
+    public string GetFullName()
+    {
+        return string.Concat(FirstName, " ", LastName);
+    }
 }

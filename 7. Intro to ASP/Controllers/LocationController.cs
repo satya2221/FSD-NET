@@ -12,9 +12,9 @@ public class LocationController (ILocationService locationService) : ControllerB
         var result = await locationService.GetAllAsync();
          if(result is null || !result.Any())
         {
-            return NotFound();
+            throw new NullReferenceException("Location Data is Empty");
         }
-        return Ok(result);
+        return Ok(new DataResponseDto<LocationResponseDto>(StatusCodes.Status200OK, "Data Found", result));
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetLocationByIdAsync(Guid id)
@@ -22,23 +22,34 @@ public class LocationController (ILocationService locationService) : ControllerB
         var result = await locationService.GetByIdAsync(id);
         if(result is null)
         {
-            return NotFound();
+            throw new NullReferenceException($"Location with id {id} is Not Found");
         }
-        return Ok(result);
+        return Ok(new SingleResponseDto<LocationResponseDto>(StatusCodes.Status200OK,"Data Found",result ) );
     }
     [HttpPost]
     public async Task<IActionResult> CreateLocationAsync(LocationRequestDto locationRequestDto)
     {
         await locationService.CreateAsync(locationRequestDto);
-        return Ok();
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly created"));
     }
     [HttpPut("{Id}")]
     public async Task<IActionResult> UpdateLocationAsync(Guid Id, LocationRequestDto locationRequestDto)
     {
         var isUpdated = await locationService.UpdateAsync(Id, locationRequestDto);
         if(!isUpdated){
-            return BadRequest();
+            throw new NullReferenceException($"Location with id {Id} Could Not Be Updated");
         }
-        return Ok();
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly created"));
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteLocationAsync(Guid id)
+    {
+        var isDeleted = await locationService.DeleteAsync(id);
+        if (!isDeleted)
+        {
+            throw new NullReferenceException($"Location with id {id} Could Not Be Deleted");
+        }
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly deleted"));
     }
 }

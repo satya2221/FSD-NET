@@ -24,7 +24,7 @@ public class RegionController (IRegionService regionService) : ControllerBase
         var result = await regionService.GetByIdAsync(id);
         if(result is null)
         {
-            return NotFound(new MessageResponseDto());
+            throw new NullReferenceException($"Region with id {id} is Not Found");
         }
         return Ok(new SingleResponseDto<RegionResponseDto>(StatusCodes.Status200OK, "Data Found", result) );
     }
@@ -41,7 +41,7 @@ public class RegionController (IRegionService regionService) : ControllerBase
     {
         var isUpdated = await regionService.UpdateAsync(Id, regionRequestDto);
         if(!isUpdated){
-            return BadRequest();
+           throw new NullReferenceException($"Region with id {Id} Could Not Be Updated");
         }
         return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly updated"));
     }
@@ -52,7 +52,7 @@ public class RegionController (IRegionService regionService) : ControllerBase
         var isDeleted = await regionService.DeleteAsync(id);
         if (!isDeleted)
         {
-            return NotFound();
+            throw new NullReferenceException($"Region with id {id} Could Not Be Deleted");
         }
         return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly deleted"));
     }

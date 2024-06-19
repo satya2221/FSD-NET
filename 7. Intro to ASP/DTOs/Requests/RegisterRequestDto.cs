@@ -1,7 +1,6 @@
 ﻿namespace _7._Intro_to_ASP;
 
-public record EmployeeRequestDto
-(
+public record RegisterRequestDto(
     string FirstName,
     string? LastName,
     string Email,
@@ -11,5 +10,8 @@ public record EmployeeRequestDto
     decimal? CommisionPct,
     Guid? ManagerId,
     Guid JobId,
-    Guid DepartmentId
+    Guid DepartmentId,
+    string UserName,
+    string Password,
+    string ConfirmPassword
 );

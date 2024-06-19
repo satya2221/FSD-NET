@@ -6,9 +6,9 @@ public class GeneralService<TIRepository,TRequest, TResponse, TEntity> : IGenera
     where TIRepository : IGeneralRepository<TEntity>
     where TEntity:class
 {
-    private readonly IMapper _mapper;
+    protected readonly IMapper _mapper;
     protected readonly TIRepository _repository;
-    private readonly ITransactionRepository _transactionRepository;
+    protected readonly ITransactionRepository _transactionRepository;
     public GeneralService(TIRepository repository, IMapper mapper, ITransactionRepository transactionRepository)
     {
         _repository = repository;

@@ -13,7 +13,7 @@ public class CountryController (ICountryService countryService) :ControllerBase
         var result = await countryService.GetAllAsync();
         if(result is null || !result.Any())
         {
-            return NotFound(new MessageResponseDto());
+            throw new NullReferenceException("Country Data is Empty");
         }
         return Ok(new DataResponseDto<CountryResponseDto>(StatusCodes.Status200OK, "Data Found", result));
     }
@@ -23,7 +23,7 @@ public class CountryController (ICountryService countryService) :ControllerBase
         var result = await countryService.GetByIdAsync(id);
         if(result is null)
         {
-            return NotFound(new MessageResponseDto());
+            throw new NullReferenceException($"Country with id {id} is Not Found");
         }
         return Ok(new SingleResponseDto<CountryResponseDto>(StatusCodes.Status200OK,"Data Found",result ) );
     }
@@ -40,7 +40,7 @@ public class CountryController (ICountryService countryService) :ControllerBase
     {
         var isUpdated = await countryService.UpdateAsync(Id, countryRequestDto);
         if(!isUpdated){
-            return BadRequest();
+            throw new NullReferenceException($"Region with id {Id} Could Not Be Updated");
         }
         return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly updated"));
     }
@@ -51,7 +51,7 @@ public class CountryController (ICountryService countryService) :ControllerBase
         var isDeleted = await countryService.DeleteAsync(id);
         if (!isDeleted)
         {
-            return NotFound(new MessageResponseDto());
+            throw new NullReferenceException($"Region with id {id} Could Not Be Deleted");
         }
         return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Data Successfuly deleted"));
     }

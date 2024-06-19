@@ -2,5 +2,5 @@
 
 public interface IEmployeeService : IGeneralService<EmployeeRequestDto, EmployeeResponseDto>
 {
-
+    Task<(IEnumerable<EmployeeDetailResponseDto> mapEmployeeDetail, int count)> GetEmployeeDetails(EmployeeDetailRequestDto request);
 }

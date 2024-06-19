@@ -4,5 +4,6 @@ namespace _7._Intro_to_ASP;
 
 public interface IUserRepository : IGeneralRepository<User>
 {
-
+     Task<User?> CheckUserNameUser(string userName);
+     Task<bool> IsUserNameExist(string userName);
 }

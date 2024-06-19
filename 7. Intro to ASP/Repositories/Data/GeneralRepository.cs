@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace _7._Intro_to_ASP;
 
-public class GeneralRepository<TEntity>(EmployeeDbContext _context) : IGeneralRepository<TEntity> where TEntity : class
+public class GeneralRepository<TEntity>(EmployeeDbContext context) : IGeneralRepository<TEntity> where TEntity : class
 {
+    protected readonly EmployeeDbContext _context = context;
     public async Task<TEntity> CreateAsync(TEntity entity)
     {
         await _context.Set<TEntity>().AddAsync(entity);
