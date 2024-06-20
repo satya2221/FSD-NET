@@ -33,6 +33,32 @@ public class UserService : GeneralService<IUserRepository, UserRequestDto, UserR
         await _transactionRepository.SaveChangesAsync();
     }
 
+    public async Task GenerateOtpAsync(GenerateOtpRequestDto requestDto)
+    {
+        var employee = await _employeeRepository.CheckEmailEmployee(requestDto.Email); //Email ada disini
+        var user = await _repository.GetByIdAsync(employee!.Id); //Username, pass, otp disini
+
+        //Buat random numbernya
+        int _minNumber = 1000;
+        int _maxNumber = 9999;
+        Random _rdm = new Random();
+        int otp = 0;
+        do
+        {
+            otp = _rdm.Next(_minNumber, _maxNumber);
+        } while (await _repository.IsOtpExist(otp));
+
+        user.Otp = otp;
+        user.IsOtpUsed = false;
+        user.ExpiredOtp = DateTime.Now.AddMinutes(5);
+        
+        _repository.Update(user);
+        await _transactionRepository.SaveChangesAsync();
+
+        //Email service ngirim otp
+
+    }
+
     public async Task<string> LoginUserAsync(LoginRequestDto loginRequestDto)
     {
         var employee = await _employeeRepository.CheckEmailEmployee(loginRequestDto.EmailOrUsername);

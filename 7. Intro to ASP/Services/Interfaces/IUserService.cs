@@ -6,4 +6,5 @@ public interface IUserService : IGeneralService<UserRequestDto, UserResponseDto>
     Task<string> LoginUserAsync(LoginRequestDto loginRequestDto);
     Task AddUserRoleAsync(UserRoleRequestDto requestDto);
     Task RemoveUserRoleAsync(UserRoleRequestDto requestDto);
+    Task GenerateOtpAsync(GenerateOtpRequestDto requestDto);
 }

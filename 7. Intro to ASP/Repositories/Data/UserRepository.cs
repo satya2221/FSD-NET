@@ -18,6 +18,12 @@ public class UserRepository : GeneralRepository<User>, IUserRepository
             );
     }
 
+    public async Task<bool> IsOtpExist(int otp)
+    {
+        return await _context.Users
+            .SingleOrDefaultAsync(user => user.Otp == otp && user.IsOtpUsed == false) is not null;
+    }
+
     public async Task<bool> IsUserNameExist(string userName)
     {
         return await _context.Users

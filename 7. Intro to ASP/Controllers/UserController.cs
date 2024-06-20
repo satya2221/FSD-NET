@@ -38,9 +38,10 @@ public class UserController(IUserService userService) : ControllerBase
     }
 
     [HttpPost("GenerateOtp")]
-    public Task<IActionResult> GenerateOtpAsync(GenerateOtpRequestDto requestDto)
+    public async Task<IActionResult> GenerateOtpAsync(GenerateOtpRequestDto requestDto)
     {
-        throw new NotImplementedException();
+        await userService.GenerateOtpAsync(requestDto);
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"Otp Terkirim ke email"));
     }
 
     [HttpPost("ForgotPassword")]
