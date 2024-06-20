@@ -3,5 +3,7 @@
 public interface IUserService : IGeneralService<UserRequestDto, UserResponseDto>
 {
     Task RegisterUserAsync(RegisterRequestDto registerRequestDto);
-    Task LoginUserAsync(LoginRequestDto loginRequestDto);
+    Task<string> LoginUserAsync(LoginRequestDto loginRequestDto);
+    Task AddUserRoleAsync(UserRoleRequestDto requestDto);
+    Task RemoveUserRoleAsync(UserRoleRequestDto requestDto);
 }

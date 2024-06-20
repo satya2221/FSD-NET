@@ -1,9 +1,13 @@
 using _7._Intro_to_ASP;
 using Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +34,34 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter the Bearer Authorization string as following: `Generated-JWT-Token`",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http, // Ini yang bikin bisa tanpa embel embel 'Bearer' di depan
+        Scheme = "Bearer",
+        BearerFormat = "JWT"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            new List<string>()
+        }
+    });
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<EmployeeDbContext>(option => option.UseSqlServer(connectionString));
@@ -57,9 +89,35 @@ builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
-builder.Services.AddExceptionHandler<GlobalExceptionHandlerCustom>();
 #endregion
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+#region Utilities config
+builder.Services.AddExceptionHandler<GlobalExceptionHandlerCustom>();
+builder.Services.AddTransient<ITokenHandler, _7._Intro_to_ASP.TokenHandler>(
+    _ => new _7._Intro_to_ASP.TokenHandler(
+        builder.Configuration["JWTService:Key"],
+        builder.Configuration["JWTService:Issuer"],
+        builder.Configuration["JWTService:Audience"],
+        Convert.ToInt32(builder.Configuration["JWTService:DurationInMinute"])
+    )
+);
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(x => {
+        x.TokenValidationParameters = new (){
+            ValidIssuer = builder.Configuration["JWTService:Issuer"],
+            ValidAudience = builder.Configuration["JWTService:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTService:Key"])),
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ClockSkew= TimeSpan.Zero
+        };
+    });
+#endregion
+
 builder.Services.AddFluentValidationAutoValidation()
 .AddValidatorsFromAssembly(typeof(Program).Assembly);
 
@@ -74,6 +132,8 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler(_ => {});
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

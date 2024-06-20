@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Models;
 
 namespace _7._Intro_to_ASP;
@@ -10,17 +11,29 @@ public class UserService : GeneralService<IUserRepository, UserRequestDto, UserR
     private readonly IDepartmentRepository _departmentRepository;
     private readonly IUserRoleRepository _userRoleRepository;
     private readonly IRoleRepository _roleRepository;
+    private readonly ITokenHandler _tokenHandler;   
 
-    public UserService(IUserRepository repository, IMapper mapper, ITransactionRepository transactionRepository, IEmployeeRepository employeeRepository, IJobRepository jobRepository, IDepartmentRepository departmentRepository, IUserRoleRepository userRoleRepository, IRoleRepository roleRepository) : base(repository, mapper, transactionRepository)
+    public UserService(IUserRepository repository, IMapper mapper, ITransactionRepository transactionRepository, IEmployeeRepository employeeRepository, IJobRepository jobRepository, IDepartmentRepository departmentRepository, IUserRoleRepository userRoleRepository, IRoleRepository roleRepository, ITokenHandler tokenHandler) : base(repository, mapper, transactionRepository)
     {
         _employeeRepository = employeeRepository;
         _departmentRepository = departmentRepository;
         _jobRepository = jobRepository;
         _userRoleRepository = userRoleRepository;
         _roleRepository = roleRepository;   
+        _tokenHandler = tokenHandler;
     }
 
-    public async Task LoginUserAsync(LoginRequestDto loginRequestDto)
+    public async Task AddUserRoleAsync(UserRoleRequestDto requestDto)
+    {
+        await CheckNullReferenceCustom(requestDto.EmployeeId, _employeeRepository, nameof(requestDto.EmployeeId));
+        await CheckNullReferenceCustom(requestDto.RoleId, _roleRepository, nameof(requestDto.RoleId));
+
+        var toEntity = _mapper.Map<UserRole>(requestDto);
+        await _userRoleRepository.CreateAsync(toEntity);
+        await _transactionRepository.SaveChangesAsync();
+    }
+
+    public async Task<string> LoginUserAsync(LoginRequestDto loginRequestDto)
     {
         var employee = await _employeeRepository.CheckEmailEmployee(loginRequestDto.EmailOrUsername);
         _transactionRepository.ChangeTrackerClear();
@@ -31,10 +44,25 @@ public class UserService : GeneralService<IUserRepository, UserRequestDto, UserR
             throw new NullReferenceException("Incorrect Email/UserName and/or Password");
         if (user is null) 
             user = await _repository.GetByIdAsync(employee!.Id);
+        if(employee is null)
+            employee = await _employeeRepository.GetByIdAsync(user.EmployeeId);
         
         // Kalau password gak sesuai throw error
-         if (!HashPasswordHandler.VerifyPassword(loginRequestDto.Password, user!.Password))
+        if (!HashPasswordHandler.VerifyPassword(loginRequestDto.Password, user!.Password))
             throw new NullReferenceException("Incorrect Email/UserName and/or Password");
+        
+        var claims = new List<Claim>{
+            new("nik", employee.Nik),
+            new("name", employee.GetFullName()),
+            new("email", employee.Email)
+            // Claimtype dipakai di role
+        };
+        var userRole = await _userRoleRepository.GetRoleByEmployeeId(employee.Id);
+        claims.AddRange(userRole.Select(item => new Claim(ClaimTypes.Role, item)));
+        var token = _tokenHandler.Access(claims);
+
+
+        return token;
     }
 
     public async Task RegisterUserAsync(RegisterRequestDto registerRequestDto)
@@ -105,5 +133,24 @@ public class UserService : GeneralService<IUserRepository, UserRequestDto, UserR
         {
             _transactionRepository.Dispose();
         }
+    }
+
+    public async Task RemoveUserRoleAsync(UserRoleRequestDto requestDto)
+    {
+        await CheckNullReferenceCustom(requestDto.EmployeeId, _employeeRepository, nameof(requestDto.EmployeeId));
+        await CheckNullReferenceCustom(requestDto.RoleId, _roleRepository, nameof(requestDto.RoleId));
+        
+
+        var userRole= await _userRoleRepository.GetUserRoleIdByEmployeeIdRoleId(requestDto.EmployeeId, requestDto.RoleId);
+
+         if (userRole is null)
+        {
+            throw new NullReferenceException("User did not have the role.");
+        }
+
+        _userRoleRepository.Delete(userRole);
+        await _transactionRepository.SaveChangesAsync();
+
+        throw new NotImplementedException();
     }
 }

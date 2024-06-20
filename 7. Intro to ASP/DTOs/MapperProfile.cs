@@ -48,5 +48,7 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.JobTitle, opt => opt.MapFrom(src => src.Job.Title))
             .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.Name))
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Department.Location.City));
+
+        CreateMap<UserRoleRequestDto, UserRole>();
     }
 }

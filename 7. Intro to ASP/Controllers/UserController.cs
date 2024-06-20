@@ -1,18 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace _7._Intro_to_ASP;
 
 [ApiController]
 [Route("Api/[controller]")]
+[Authorize(Roles = "Employee")]
 public class UserController(IUserService userService) : ControllerBase
 {
-
-     [HttpPost("Login")]
+    [AllowAnonymous]
+    [HttpPost("Login")]
     public async Task<IActionResult> LoginUserAsync(LoginRequestDto requestDto)
     {
-        await userService.LoginUserAsync(requestDto);
+       var result = await userService.LoginUserAsync(requestDto);
 
-        return Ok(new MessageResponseDto(StatusCodes.Status200OK, "Login user is success."));
+        return Ok(new SingleResponseDto<string>(StatusCodes.Status200OK, "Login user is success.", result));
     }
     
     [HttpPost("Register")]
@@ -20,6 +22,31 @@ public class UserController(IUserService userService) : ControllerBase
     {
         await userService.RegisterUserAsync(registerRequestDto);
         return Ok(new MessageResponseDto(StatusCodes.Status200OK,"User registered successfully"));
+    }
+
+    [HttpPost("AddRole")]
+    public async Task<IActionResult> AddUserRole(UserRoleRequestDto requestDto)
+    {
+        await userService.AddUserRoleAsync(requestDto);
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"New User role added successfully"));
+    }
+    [HttpPost("RemoveRole")]
+    public async Task<IActionResult> RemoveUserRole(UserRoleRequestDto requestDto)
+    {
+        await userService.RemoveUserRoleAsync(requestDto);
+        return Ok(new MessageResponseDto(StatusCodes.Status200OK,"New User role removed successfully"));
+    }
+
+    [HttpPost("GenerateOtp")]
+    public Task<IActionResult> GenerateOtpAsync(GenerateOtpRequestDto requestDto)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("ForgotPassword")]
+    public Task<IActionResult> ForgotPasswordAsync(ForgotPasswordRequestDto requestDto)
+    {
+        throw new NotImplementedException();
     }
 
     [HttpGet]
