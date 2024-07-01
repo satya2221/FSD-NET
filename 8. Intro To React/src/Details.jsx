@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
-import React from "react"
 import { useParams } from "react-router-dom"
-import fetchPet from "./fetchPet"
 import { CircleLoader } from "react-spinners"
+import React from "react"
+
+import fetchPet from "./fetchPet"
 import Carousel from "./Carousel"
+import ErrorBoundary from "./ErrorBoundary"
 
 function Details() {
   const params = useParams()
@@ -32,4 +34,11 @@ function Details() {
   )
 }
 
-export default Details
+//export default Details
+export default function DetailsErrorBoundary(props){
+  return(
+    <ErrorBoundary>
+      <Details {...props} />
+    </ErrorBoundary>
+  )
+}
