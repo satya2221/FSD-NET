@@ -3,6 +3,7 @@ import React from "react"
 import { useParams } from "react-router-dom"
 import fetchPet from "./fetchPet"
 import { CircleLoader } from "react-spinners"
+import Carousel from "./Carousel"
 
 function Details() {
   const params = useParams()
@@ -20,6 +21,7 @@ function Details() {
   const pet = result.data.pets[0]
   return (
     <div className="details">
+      <Carousel images = {pet.images} />
       <div>
         <h1>{pet.name}</h1>
         <h2>{`${pet.animal} ${pet.breed} ${pet.city} ${pet.state}`}</h2>
