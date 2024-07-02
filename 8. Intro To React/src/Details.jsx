@@ -1,17 +1,20 @@
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { CircleLoader } from "react-spinners"
-import React, { useContext, useState } from "react"
+import { useDispatch } from "react-redux"
+import React, { useState } from "react"
 
+import {adopt} from './adoptedPetSlice'
 import fetchPet from "./fetchPet"
 import Carousel from "./Carousel"
 import ErrorBoundary from "./ErrorBoundary"
 import Modal from "./Modal"
-import AdoptedPetContext from "./PetContext"
+//import AdoptedPetContext from "./PetContext"
 
 function Details() {
   const navigate = useNavigate()
-  const [,setAdoptedPet] = useContext(AdoptedPetContext)
+  //const [,setAdoptedPet] = useContext(AdoptedPetContext)
+  const dispatch = useDispatch()
   const params = useParams()
   const result = useQuery(["details", params.id], fetchPet)
   const [showModal, setShowModal] = useState(false)
@@ -43,7 +46,7 @@ function Details() {
               <div className="buttons">
                 <button
                   onClick={() => {
-                    setAdoptedPet(pet)
+                    dispatch(adopt(pet))
                     navigate('/')
                   }}
                 >
