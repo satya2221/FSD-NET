@@ -1,13 +1,15 @@
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { CircleLoader } from "react-spinners"
-import React, { useContext, useState } from "react"
+import React, { lazy, useContext, useState } from "react"
 
 import fetchPet from "./fetchPet"
 import Carousel from "./Carousel"
 import ErrorBoundary from "./ErrorBoundary"
-import Modal from "./Modal"
+//import Modal from "./Modal"
 import AdoptedPetContext from "./PetContext"
+
+const Modal = lazy(() => import('./Modal'))
 
 function Details() {
   const navigate = useNavigate()
