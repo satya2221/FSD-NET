@@ -1,15 +1,17 @@
 import { useQuery } from "@tanstack/react-query"
 import { useParams } from "react-router-dom"
 import { CircleLoader } from "react-spinners"
-import React from "react"
+import React, { useState } from "react"
 
 import fetchPet from "./fetchPet"
 import Carousel from "./Carousel"
 import ErrorBoundary from "./ErrorBoundary"
+import Modal from "./Modal"
 
 function Details() {
   const params = useParams()
   const result = useQuery(["details", params.id], fetchPet)
+  const [showModal, setShowModal] = useState(false)
 
   if (result.isLoading) {
     return (
@@ -27,8 +29,21 @@ function Details() {
       <div>
         <h1>{pet.name}</h1>
         <h2>{`${pet.animal} ${pet.breed} ${pet.city} ${pet.state}`}</h2>
-        <button>Apakah mau mengadopsi {pet.name}</button>
+        <button onClick={() => setShowModal(true)}>
+          Apakah mau mengadopsi {pet.name}
+        </button>
         <p>{pet.description}</p>
+        {showModal ? (
+          <Modal>
+            <div>
+              <h1>Apakah kamu ingini mengadopsi {pet.name}?</h1>
+              <div className="buttons">
+                <button>Yes</button>
+                <button onClick={() => setShowModal(false)}>No</button>
+              </div>
+            </div>
+          </Modal>
+        ) : null}
       </div>
     </div>
   )
