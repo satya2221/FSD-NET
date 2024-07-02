@@ -1,14 +1,17 @@
 import { useQuery } from "@tanstack/react-query"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { CircleLoader } from "react-spinners"
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 
 import fetchPet from "./fetchPet"
 import Carousel from "./Carousel"
 import ErrorBoundary from "./ErrorBoundary"
 import Modal from "./Modal"
+import AdoptedPetContext from "./PetContext"
 
 function Details() {
+  const navigate = useNavigate()
+  const [,setAdoptedPet] = useContext(AdoptedPetContext)
   const params = useParams()
   const result = useQuery(["details", params.id], fetchPet)
   const [showModal, setShowModal] = useState(false)
@@ -38,7 +41,14 @@ function Details() {
             <div>
               <h1>Apakah kamu ingini mengadopsi {pet.name}?</h1>
               <div className="buttons">
-                <button>Yes</button>
+                <button
+                  onClick={() => {
+                    setAdoptedPet(pet)
+                    navigate('/')
+                  }}
+                >
+                  Yes
+                </button>
                 <button onClick={() => setShowModal(false)}>No</button>
               </div>
             </div>

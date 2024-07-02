@@ -54,6 +54,10 @@ body {
   border-bottom: #333 2px solid;
 }
 
+.pet.image-container{
+  margin-bottom: 20px;
+}
+
 .pet img {
   width: 100px;
   min-height: 100px;

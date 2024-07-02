@@ -1,12 +1,14 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import useBreedList from "./useBreeedList"
 import Result from "./Results"
 import { useQuery } from "@tanstack/react-query"
 import fetchSearch from "./fetchSearch"
+import AdoptedPetContext from "./PetContext"
 
 const ANIMALS = ["bird", "cat", "dog", "rabbit", 'reptile']
 
 const SearchParams = () => {
+  const [adoptedPet] = useContext(AdoptedPetContext)
   // const [location, setLocation] = useState("Seattle, WA")
   const [animal, setAnimal] = useState("")
   //const [breed, setBreed] = useState("")
@@ -46,6 +48,11 @@ const SearchParams = () => {
           setReqParams(obj)
         }}
       >
+        {adoptedPet ? (
+          <div className="pet image-container">
+            <img src={adoptedPet.images[0]} alt={adoptedPet.name} />
+          </div>
+        ) : null}
         <label htmlFor="location">
           <input
             id="location"
