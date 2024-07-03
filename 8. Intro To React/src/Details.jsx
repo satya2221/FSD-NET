@@ -1,11 +1,13 @@
-import { useQuery } from "@tanstack/react-query"
+//import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { CircleLoader } from "react-spinners"
 import { useDispatch } from "react-redux"
 import React, { useState } from "react"
 
+import { useGetPetQuery } from "./petApiService"
 import {adopt} from './adoptedPetSlice'
-import fetchPet from "./fetchPet"
+
+//import fetchPet from "./fetchPet"
 import Carousel from "./Carousel"
 import ErrorBoundary from "./ErrorBoundary"
 import Modal from "./Modal"
@@ -16,10 +18,11 @@ function Details() {
   //const [,setAdoptedPet] = useContext(AdoptedPetContext)
   const dispatch = useDispatch()
   const params = useParams()
-  const result = useQuery(["details", params.id], fetchPet)
+  const {data: pet, isLoading} =  useGetPetQuery(params.id)
+  //const result = useQuery(["details", params.id], fetchPet)
   const [showModal, setShowModal] = useState(false)
 
-  if (result.isLoading) {
+  if (isLoading) {
     return (
       <div className="loading-pane">
         <h2 className="loader">
@@ -28,7 +31,7 @@ function Details() {
       </div>
     )
   }
-  const pet = result.data.pets[0]
+  //const pet = result.data.pets[0]
   return (
     <div className="details">
       <Carousel images = {pet.images} />
