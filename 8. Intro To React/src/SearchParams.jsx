@@ -15,9 +15,9 @@ const SearchParams = () => {
   const searchParam = useSelector((state) => state.searchParams.value)
   const adoptedPet = useSelector((state) => state.adopsiHewan.value)
   // const [adoptedPet] = useContext(AdoptedPetContext)
-  // const [location, setLocation] = useState("Seattle, WA")
-  const [animal, setAnimal] = useState("")
-  //const [breed, setBreed] = useState("")
+  const [location, setLocation] = useState(searchParam.location)
+  const [animal, setAnimal] = useState(searchParam.animal)
+  const [breed, setBreed] = useState(searchParam.breed)
   // const [reqParams, setReqParams] = useState({
   //   location:'',
   //   animal: '',
@@ -65,8 +65,8 @@ const SearchParams = () => {
             placeholder="Location"
             type="text"
             name = "location"
-            // value={location}
-            // onChange={(e) => setLocation(e.target.value)}
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
           />
         </label>
         <label htmlFor="animal">
@@ -74,7 +74,7 @@ const SearchParams = () => {
           <select
             id="animal"
             name="animal"
-            //value={animal}
+            value={animal}
             onChange={(e) => {
               setAnimal(e.target.value)
             }}
@@ -96,8 +96,9 @@ const SearchParams = () => {
             disabled={!breeds.length}
             id="breed"
             name = "breed"
-            // onChange={(e) => setBreed(e.target.value)}
-            // onBlur={(e) => setBreed(e.target.value)}
+            value={breed}
+            onChange={(e) => setBreed(e.target.value)}
+            onBlur={(e) => setBreed(e.target.value)}
           >
             <option />
             {breeds.map((breed) => (
