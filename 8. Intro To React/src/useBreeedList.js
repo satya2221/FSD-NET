@@ -31,7 +31,7 @@ export default function useBreedList(animal){
 
     // return [breedList, status]
     //const result = useQuery(['breeds', animal], fetchBreedList)
-    const {data: breeds} = useGetBreedQuery(animal)
+    const {data: breeds} = useGetBreedQuery(animal, {skip: !animal})
     return [breeds ?? []]
 }
 
