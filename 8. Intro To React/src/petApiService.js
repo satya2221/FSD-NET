@@ -12,10 +12,17 @@ export const petApi = createApi({
                 params: {id : id}
             }),
             transformResponse: (response) => response.pets[0]
+        }),
+        getBreed: builder.query({
+            query: animal => ({
+                url:'breeds',
+                params: {animal}
+            }),
+            transformResponse: (response) => response.breeds
         })
     })
 })
 
 // useGetPetQuery diambil dari isi builder endpoint yang berupa
 // getPet dan isi getPet yaitu builder.query
-export const {useGetPetQuery} = petApi
+export const {useGetPetQuery, useGetBreedQuery} = petApi

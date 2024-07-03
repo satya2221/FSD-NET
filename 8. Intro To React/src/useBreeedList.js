@@ -1,7 +1,9 @@
 // import { useEffect, useState } from "react";
 
-import { useQuery } from "@tanstack/react-query";
-import fetchBreedList from "./fetchBreedList";
+// import { useQuery } from "@tanstack/react-query";
+// import fetchBreedList from "./fetchBreedList";
+
+import { useGetBreedQuery } from "./petApiService"
 
 // const localCache = {}
 
@@ -28,8 +30,9 @@ export default function useBreedList(animal){
     // }, [animal])
 
     // return [breedList, status]
-    const result = useQuery(['breeds', animal], fetchBreedList)
-    return [result?.data?.breeds ?? [], result.status]
+    //const result = useQuery(['breeds', animal], fetchBreedList)
+    const {data: breeds} = useGetBreedQuery(animal)
+    return [breeds ?? []]
 }
 
 //export default useBreedList
