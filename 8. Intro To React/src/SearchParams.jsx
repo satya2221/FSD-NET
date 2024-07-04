@@ -34,8 +34,9 @@ const SearchParams = () => {
   //   setPets(jsonRes.pets)
   // }
   return (
-    <div className="search-params">
+    <div className="my-0 mx-auto w-11/12">
       <form
+        className="p-10 mb-10 rounded-lg bg-gray-300 shadow-lg flex flex-col justify-center items-center"
         onSubmit={(e) => {
           e.preventDefault() // Cegah halaman ke refresh
           // fetchPets()
@@ -59,6 +60,7 @@ const SearchParams = () => {
             placeholder="Location"
             type="text"
             name = "location"
+            className="search-input"
             // value={location}
             // onChange={(e) => setLocation(e.target.value)}
           />
