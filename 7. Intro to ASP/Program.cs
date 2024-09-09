@@ -10,7 +10,6 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllers()
@@ -121,6 +120,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddFluentValidationAutoValidation()
 .AddValidatorsFromAssembly(typeof(Program).Assembly);
 
+builder.Services.AddCors(cfg => {
+    cfg.AddPolicy(name: "MyPolicy", policy => {
+        policy
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .WithOrigins("http://localhost:5173");
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -133,10 +142,12 @@ app.UseExceptionHandler(_ => {});
 
 app.UseHttpsRedirection();
 
+app.MapControllers();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseCors("MyPolicy");
 
 app.Run();

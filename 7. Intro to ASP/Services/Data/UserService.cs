@@ -67,7 +67,7 @@ public class UserService : GeneralService<IUserRepository, UserRequestDto, UserR
 
         // Dua duanya ndak ada throw error
         if (user is null && employee is null)
-            throw new NullReferenceException("Incorrect Email/UserName and/or Password");
+            throw new ArgumentException("Incorrect Email/UserName and/or Password");
         if (user is null) 
             user = await _repository.GetByIdAsync(employee!.Id);
         if(employee is null)
@@ -75,7 +75,7 @@ public class UserService : GeneralService<IUserRepository, UserRequestDto, UserR
         
         // Kalau password gak sesuai throw error
         if (!HashPasswordHandler.VerifyPassword(loginRequestDto.Password, user!.Password))
-            throw new NullReferenceException("Incorrect Email/UserName and/or Password");
+            throw new ArgumentException("Incorrect Email/UserName and/or Password");
         
         var claims = new List<Claim>{
             new("nik", employee.Nik),
