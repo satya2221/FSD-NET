@@ -6,6 +6,36 @@
   .search-input{
     @apply w-60 mb-4 block;
   }
+  .search{
+    @apply rounded-md bg-[#faeff0] w-[715px] p-[15px] float-left mb-[25px]
+  }
+  .pet{
+    @apply w-full h-[130px] block overflow-hidden my-6 mx-0 border-b-2
+  }
+  .pet img{
+    @apply w-[100px] min-h-[100px]
+  }
+  .pet h1{
+    @apply whitespace-nowrap font-normal text-3xl overflow-hidden m-0 text-ellipsis
+  }
+  .pet h2 {
+    @apply whitespace-nowrap font-normal text-xl m-0 text-ellipsis
+  }
+  .pet.image-container{
+    @apply mb-5
+  }
+  .image-container{
+    @apply w-24 h-24 float-left my-0 mr-5 ml-[10px] rounded-full
+  }
+  /* .info{
+    @apply float-left w-10/12 h-[100px] pt-[10px] flex-col justify-around
+  } */
+  .search-params {
+    @apply w-[1100px] my-0 mx-auto lg:my-2 lg:w-11/12
+  }
+  .search-params form{
+    @apply rounded-md bg-[#faeff0] w-[360px] my-0 mr-6 ml-0 px-4 pt-9 pb-4 float-left
+  }
 }
 * {
   outline: 1px solid red;

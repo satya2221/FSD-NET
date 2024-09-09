@@ -34,9 +34,9 @@ const SearchParams = () => {
   //   setPets(jsonRes.pets)
   // }
   return (
-    <div className="my-0 mx-auto w-11/12">
+    <div className="search-params">
       <form
-        className="p-10 mb-10 rounded-lg bg-gray-300 shadow-lg flex flex-col justify-center items-center"
+        //className="p-10 mb-10 rounded-lg bg-gray-300 shadow-lg flex flex-col justify-center items-center"
         onSubmit={(e) => {
           e.preventDefault() // Cegah halaman ke refresh
           // fetchPets()

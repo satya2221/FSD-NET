@@ -2,7 +2,7 @@ import React from "react"
 import Pet from "./Pet"
 const Result = ({ pets }) => {
   return (
-    <div className="rounded-md shadow-lg w-[715px] p-4 float-left mb-6" style={{background: '#faeff0'}}>
+    <div className="search">
       {!pets.length ? (
         <h1>Tidak ada hewan peliharaan yang ditemukan</h1>
       ) : (
